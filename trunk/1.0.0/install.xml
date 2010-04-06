@@ -51,7 +51,6 @@
 		FROM ' . POSTS_TABLE . "
 		WHERE topic_id = $topic_id
 			AND post_time >= $min_post_time
-			$usort_where
 		" . (($auth->acl_get('m_approve', $forum_id)) ? '' : 'AND post_approved = 1');
 	$result = $db->sql_query($sql);
 	$total_posts = (int) $db->sql_fetchfield('num_posts');
@@ -86,16 +85,17 @@ elseif(isset($_POST['user_sort']))
 				<find><![CDATA['U_BUMP_TOPIC'			=> (bump_topic_allowed($forum_id, $topic_data['topic_bumped'], $topic_data['topic_last_post_time'], $topic_data['topic_poster'], $topic_data['topic_last_poster_id'])) ? append_sid("{$phpbb_root_path}posting.$phpEx", "mode=bump&amp;f=$forum_id&amp;t=$topic_id&amp;hash=" . generate_link_hash("topic_$topic_id")) : '')
 );]]></find>
 				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
-	$sql = 'SELECT DISTINCT p.poster_id AS poster_id, u.username_clean AS username_clean
+	$sql = 'SELECT DISTINCT p.poster_id AS poster_id, u.username AS username
 		FROM ' . POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
 		WHERE p.topic_id = ' . $topic_data['topic_id'] . '
-			AND p.poster_id = u.user_id
-		ORDER BY u.username_clean';
+			AND p.poster_id = u.user_id' . 
+			(($auth->acl_get('m_approve', $forum_id)) ? '' : ' AND p.post_approved = 1') .
+		' ORDER BY u.username';
 	$result = $db->sql_query($sql);
 	$user_ary = array();
 	while($urow = $db->sql_fetchrow($result))
 	{
-		$user_ary[] = '<option value="' . $urow['poster_id'] . '">' . $urow['username_clean'] . '</option>';
+		$user_ary[] = '<option value="' . $urow['poster_id'] . '">' . $urow['username'] . '</option>';
 	}
 	$s_topic_users = implode(' ', $user_ary);
 	$db->sql_freeresult($result);
@@ -123,8 +123,8 @@ $usort_where = ($s_sort_user_id !== 0) ? ' AND p.poster_id = ' . $s_sort_user_id
 		
 		<open src="styles/prosilver/template/viewtopic_body.html">
 			<edit>
-				<find><![CDATA[		<label>{L_DISPLAY_POSTS}: {S_SELECT_SORT_DAYS}</label>]]></find>
-				<action type="before-add"><![CDATA[        <label>{L_DISPLAY_USER_POSTS}: {S_SELECT_SORT_USERS}</label>]]></action>
+				<find><![CDATA[<label>{L_SORT_BY} {S_SELECT_SORT_KEY}</label> <label>{S_SELECT_SORT_DIR} <input type="submit" name="sort" value="{L_GO}" class="button2" /></label>]]></find>
+				<action type="after-add"><![CDATA[        <br /><label>{L_DISPLAY_USER_POSTS}: {S_SELECT_SORT_USERS} <input type="submit" name="user_sort" value="{L_GO}" class="button2" /></label>]]></action>
 			</edit>
 		</open>
 		<diy-instructions lang="en"><![CDATA[After all edits have been performed, navigate to the ACP and purge the cache and refresh the template.]]></diy-instructions>
