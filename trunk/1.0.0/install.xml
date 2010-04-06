@@ -30,6 +30,13 @@
 					<change><![CDATA[Version 1.0.0 Released and Submitted to MOD DB]]></change>
 				</changelog>
 			</entry>
+			<entry>
+				<date>2010-04-06</date>
+				<rev-version>1.0.0</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[Still keeping it at version 1.0.0, Re-submitted to MOD DB]]></change>
+				</changelog>
+			</entry>
 		</history>
 	</header>
 	<action-group>
