@@ -7,7 +7,7 @@
 		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
 		<title lang="en"><![CDATA[User Post Isolation]]></title>
 		<description lang="en"><![CDATA[View all posts from a certain user in a topic.]]></description>
-		<author-notes lang="en"><![CDATA[If this MOD has helped you, please consider donating by visiting http://www.phpbbdevelopers.net/board/lwdonate.php. All amounts are appreciated and will be put towards the upkeep of the website and the further creation and support of MODs.]]></author-notes>
+		<author-notes lang="en"><![CDATA[If this MOD has helped you, please consider donating by visiting http://www.phpbbdevelopers.net/board/lwdonate.php. All donations are voluntary and will be greatly appreciated.]]></author-notes>
 		<author-group>
 			<author>
 				<realname><![CDATA[David King]]></realname>
@@ -16,7 +16,7 @@
 				<email><![CDATA[imkingdavid@gmail.com]]></email>
 			</author>
 		</author-group>
-		<mod-version>1.0.0</mod-version>
+		<mod-version>1.0.1</mod-version>
 		<installation>
 			<level>easy</level>
 			<time>300</time>
@@ -37,6 +37,15 @@
 					<change><![CDATA[Still keeping it at version 1.0.0, Re-submitted to MOD DB]]></change>
 				</changelog>
 			</entry>
+			<entry>
+				<date>2010-05-01</date>
+				<rev-version>1.0.1</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[[fix] a couple of backend changes recommended by MOD Team]]></change>
+					<change><![CDATA[[fix] drop down box defaults to last chosen option]]></change>
+					<change><![CDATA[[feature] added "All users" option to select box to allow user to return to normal topic view.]]></change>
+				</changelog>
+			</entry>
 		</history>
 	</header>
 	<action-group>
@@ -45,6 +54,7 @@
 				<find><![CDATA[	'DISPLAY_POSTS'			=> 'Display posts from previous',]]></find>
 				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
 	'DISPLAY_USER_POSTS'	=> 'Display posts by user',
+	'VIEW_ALL_POSTERS'	=> 'All users',
 //----[ End User Post Isolation ]----\\]]></action>
 			</edit>
 		</open>
@@ -71,9 +81,9 @@
 	}
 }]]></find>
 				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
-elseif(isset($_POST['user_sort']))
+elseif(isset($_POST['user_sort']) && request_var('user_select', 0) !== 0)
 {
-	$s_sort_user_id = request_var('user_select', (int) 0);
+	$s_sort_user_id = request_var('user_select', 0);
 
 	$sql = 'SELECT COUNT(post_id) AS num_posts
 		FROM ' . POSTS_TABLE . "
@@ -102,12 +112,13 @@ elseif(isset($_POST['user_sort']))
 	$user_ary = array();
 	while($urow = $db->sql_fetchrow($result))
 	{
-		$user_ary[] = '<option value="' . $urow['poster_id'] . '">' . $urow['username'] . '</option>';
+		$selected = ($s_sort_user_id == $urow['poster_id']) ? ' selected="selected"' : '';
+		$user_ary[] = '<option value="' . $urow['poster_id'] . '"' . $selected . '>' . $urow['username'] . '</option>';
 	}
 	$s_topic_users = implode(' ', $user_ary);
 	$db->sql_freeresult($result);
 	$template->assign_vars(array(
-		'S_SELECT_SORT_USERS'	=> '<select name="user_select">' . $s_topic_users . '</select>',
+		'S_SELECT_SORT_USERS'	=> ($s_topic_users) ? '<select name="user_select"><option value="0">' . $user->lang['VIEW_ALL_POSTERS'] . '</option>' . $s_topic_users . '</select>' : '',
 	));
 //----[ End User Post Isolation ]----\\]]></action>
 			</edit>
@@ -115,8 +126,8 @@ elseif(isset($_POST['user_sort']))
 				<find><![CDATA[$sql = $db->sql_build_query('SELECT', array(
 	'SELECT'	=> 'u.*, z.friend, z.foe, p.*',]]></find>
 				<action type="before-add"><![CDATA[//----[ User Post Isolation ]----\\
-$s_sort_user_id = (isset($_POST['user_sort'])) ? request_var('user_select', (int) 0) : 0;
-$usort_where = ($s_sort_user_id !== 0) ? ' AND p.poster_id = ' . $s_sort_user_id : '';
+$s_sort_user_id = (isset($_POST['user_sort'])) ? request_var('user_select', 0) : 0;
+$usort_where = ($s_sort_user_id) ? ' AND p.poster_id = ' . $s_sort_user_id : '';
 //----[ End User Post Isolation ]----\\]]></action>
 			</edit>
 			<edit>

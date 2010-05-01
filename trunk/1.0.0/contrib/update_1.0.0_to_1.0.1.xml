@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="modx.prosilver.en.xsl"?>
+<!--NOTICE: Please open this file in your web browser. If presented with a security warning, you may safely tell it to allow the blocked content.-->
+<!--For security purposes, please check: http://www.phpbb.com/mods/ for the latest version of this MOD.\nAlthough MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD.\nNo support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.5.xsd">
+	<header>
+		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
+		<title lang="en"><![CDATA[User Post Isolation]]></title>
+		<description lang="en"><![CDATA[View all posts from a certain user in a topic.]]></description>
+		<author-notes lang="en"><![CDATA[This file should be used only to update from version 1.0.0 to version 1.0.1. If you do not have 1.0.0 installed already, please install the latest version of this MOD by using the install.xml in the main directory of this MOD package.
+		If this MOD has helped you, please consider donating by visiting http://www.phpbbdevelopers.net/board/lwdonate.php. All donations are voluntary and will be greatly appreciated.]]></author-notes>
+		<author-group>
+			<author>
+				<realname><![CDATA[David King]]></realname>
+				<username><![CDATA[imkingdavid]]></username>
+				<homepage><![CDATA[http://www.phpbbdevelopers.net/]]></homepage>
+				<email><![CDATA[imkingdavid@gmail.com]]></email>
+			</author>
+		</author-group>
+		<mod-version>1.0.1</mod-version>
+		<installation>
+			<level>easy</level>
+			<time>300</time>
+			<target-version>3.0.7-PL1</target-version>
+		</installation>
+		<history>
+			<entry>
+				<date>2010-04-05</date>
+				<rev-version>1.0.0</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[Version 1.0.0 Released and Submitted to MOD DB]]></change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2010-04-06</date>
+				<rev-version>1.0.0</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[Still keeping it at version 1.0.0, Re-submitted to MOD DB]]></change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2010-05-01</date>
+				<rev-version>1.0.1</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[[fix] a couple of backend changes recommended by MOD Team]]></change>
+					<change><![CDATA[[fix] drop down box defaults to last chosen option]]></change>
+					<change><![CDATA[[feature] added "All users" option to select box to allow user to return to normal topic view.]]></change>
+				</changelog>
+			</entry>
+		</history>
+	</header>
+	<action-group>
+		<open src="language/en/common.php">
+			<edit>
+				<find><![CDATA[//----[ End User Post Isolation ]----\\]]></find>
+				<action type="before-add"><![CDATA['VIEW_ALL_POSTERS'	=> 'All users',]]></action>
+			</edit>
+		</open>
+		<open src="viewtopic.php">
+			<edit>
+				<find><![CDATA[elseif(isset($_POST['user_sort']))]]></find>
+				<action type="replace-with"><![CDATA[elseif(isset($_POST['user_sort']) && request_var('user_select', 0) !== 0)]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[$s_sort_user_id = request_var('user_select', (int) 0);]]></find>
+				<action type="replace-with"><![CDATA[$s_sort_user_id = request_var('user_select', 0);]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[$user_ary[] = '<option value="' . $urow['poster_id'] . '">' . $urow['username'] . '</option>';]]></find>
+				<action type="replace-with"><![CDATA[		$selected = ($s_sort_user_id == $urow['poster_id']) ? ' selected="selected"' : '';
+		$user_ary[] = '<option value="' . $urow['poster_id'] . '"' . $selected . '>' . $urow['username'] . '</option>';]]>
+			</edit>
+			<edit>
+				<find><![CDATA['S_SELECT_SORT_USERS'	=> '<select name="user_select">' . $s_topic_users . '</select>',]]></find>
+				<action type="replace-with"><![CDATA['S_SELECT_SORT_USERS'	=> ($s_topic_users) ? '<select name="user_select"><option value="0">' . $user->lang['VIEW_ALL_POSTERS'] . '</option>' . $s_topic_users . '</select>' : '',]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[$s_sort_user_id = (isset($_POST['user_sort'])) ? request_var('user_select', (int) 0) : 0;]]></find>
+				<action type="replace-with"><![CDATA[$s_sort_user_id = (isset($_POST['user_sort'])) ? request_var('user_select', 0) : 0;]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[$usort_where = ($s_sort_user_id !== 0) ? ' AND p.poster_id = ' . $s_sort_user_id : '';]]></find>
+				<action type="replace-with"><![CDATA[$usort_where = ($s_sort_user_id) ? ' AND p.poster_id = ' . $s_sort_user_id : '';]]></action>
+			</edit>
+		</open>
+		<diy-instructions lang="en"><![CDATA[After all edits have been performed, navigate to the ACP and purge the cache and refresh the template.]]></diy-instructions>
+	</action-group>
+</mod>
