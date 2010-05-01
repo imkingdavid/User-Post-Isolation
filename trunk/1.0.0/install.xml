@@ -46,6 +46,9 @@
 					<change><![CDATA[[feature] added "All users" option to select box to allow user to return to normal topic view.]]></change>
 				</changelog>
 			</entry>
+			<link-group>
+				<link type="contrib" href="contrib/update_1.0.0_to_1.0.1.xml" lang="en">Update Instructions (1.0.0 to 1.0.1)</link>
+			</link-group>
 		</history>
 	</header>
 	<action-group>

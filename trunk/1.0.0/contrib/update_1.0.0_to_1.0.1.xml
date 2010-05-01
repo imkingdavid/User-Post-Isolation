@@ -48,6 +48,9 @@
 				</changelog>
 			</entry>
 		</history>
+		<link-group>
+			<link type="parent" href="../install.xml" lang="en">Installation Instructions</link>
+		</link-group>
 	</header>
 	<action-group>
 		<open src="language/en/common.php">
@@ -68,7 +71,7 @@
 			<edit>
 				<find><![CDATA[$user_ary[] = '<option value="' . $urow['poster_id'] . '">' . $urow['username'] . '</option>';]]></find>
 				<action type="replace-with"><![CDATA[		$selected = ($s_sort_user_id == $urow['poster_id']) ? ' selected="selected"' : '';
-		$user_ary[] = '<option value="' . $urow['poster_id'] . '"' . $selected . '>' . $urow['username'] . '</option>';]]>
+		$user_ary[] = '<option value="' . $urow['poster_id'] . '"' . $selected . '>' . $urow['username'] . '</option>';]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA['S_SELECT_SORT_USERS'	=> '<select name="user_select">' . $s_topic_users . '</select>',]]></find>
