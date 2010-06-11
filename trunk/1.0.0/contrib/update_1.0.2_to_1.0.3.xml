@@ -127,7 +127,7 @@ $usort_where = ($s_sort_user_id !== 0) ? ' AND p.poster_id = ' . $s_sort_user_id
 			<edit>
 				<find><![CDATA[		$limit_posts_time
 	ORDER BY $sql_sort_order";]]></find>
-				<action type="after-add"><![CDATA[		$limit_posts_time
+				<action type="replace-with"><![CDATA[		$limit_posts_time
 		$usort_where
 	ORDER BY $sql_sort_order";]]></action>
 			</edit>
