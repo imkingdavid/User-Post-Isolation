@@ -123,7 +123,7 @@ elseif($s_sort_user_id !== 0)
 		WHERE p.topic_id = ' . $topic_data['topic_id'] . '
 			AND p.poster_id = u.user_id' . 
 			(($auth->acl_get('m_approve', $forum_id)) ? '' : ' AND p.post_approved = 1') .
-		' ORDER BY u.username';
+		' ORDER BY LOWER(u.username)';
 	$result = $db->sql_query($sql);
 	$user_ary = array();
 	while($urow = $db->sql_fetchrow($result))
