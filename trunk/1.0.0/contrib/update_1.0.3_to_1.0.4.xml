@@ -7,7 +7,8 @@
 		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
 		<title lang="en"><![CDATA[User Post Isolation]]></title>
 		<description lang="en"><![CDATA[View all posts from a certain user in a topic.]]></description>
-		<author-notes lang="en"><![CDATA[If this MOD has helped you, please consider donating by visiting http://www.phpbbdevelopers.net/board/lwdonate.php. All donations are voluntary and will be greatly appreciated.]]></author-notes>
+		<author-notes lang="en"><![CDATA[This file should be used only to update from version 1.0.0 to version 1.0.1. If you do not have 1.0.0 installed already, please install the latest version of this MOD by using the install.xml in the main directory of this MOD package.
+		If this MOD has helped you, please consider donating by visiting http://www.phpbbdevelopers.net/board/lwdonate.php. All donations are voluntary and will be greatly appreciated.]]></author-notes>
 		<author-group>
 			<author>
 				<realname><![CDATA[David King]]></realname>
@@ -70,10 +71,7 @@
 			</entry>
 		</history>
 		<link-group>
-			<link type="contrib" href="contrib/update_1.0.0_to_1.0.1.xml" lang="en">Update Instructions (1.0.0 to 1.0.1)</link>
-			<link type="contrib" href="contrib/update_1.0.1_to_1.0.2.xml" lang="en">Update Instructions (1.0.1 to 1.0.2)</link>
-			<link type="contrib" href="contrib/update_1.0.2_to_1.0.3.xml" lang="en">Update Instructions (1.0.2 to 1.0.3)</link>
-			<link type="contrib" href="contrib/update_1.0.3_to_1.0.4.xml" lang="en">Update Instructions (1.0.3 to 1.0.4)</link>
+			<link type="parent" href="../install.xml" lang="en">Installation Instructions</link>
 		</link-group>
 	</header>
 	<copy>
@@ -81,13 +79,6 @@
 	</copy>
 	<action-group>
 		<open src="language/en/common.php">
-			<edit>
-				<find><![CDATA[	'DISPLAY_POSTS'			=> 'Display posts from previous',]]></find>
-				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
-	'DISPLAY_USER_POSTS'	=> 'Display posts by user',
-	'VIEW_ALL_POSTERS'	=> 'All users',
-//----[ End User Post Isolation ]----\\]]></action>
-			</edit>
 			<edit>
 				<find><![CDATA['WHO_IS_ONLINE'		=> 'Who is online',]]></find>
 				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
@@ -100,45 +91,27 @@
 		</open>
 		<open src="viewtopic.php">
 			<edit>
-				<find><![CDATA[$sort_days	= request_var('st', $default_sort_days);
-$sort_key	= request_var('sk', $default_sort_key);
-$sort_dir	= request_var('sd', $default_sort_dir);]]></find>
-				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
-$s_sort_user_id = request_var('user_select', 0);
-//----[ End User Post Isolation ]----\\]]></action>
-			</edit>
-			<edit>
-				<find><![CDATA[if (isset($_POST['sort']))
-	{
-		$start = 0;
-	}
-}]]></find>
-				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
-elseif($s_sort_user_id !== 0)
-{
-	$sql = 'SELECT COUNT(post_id) AS num_posts
-		FROM ' . POSTS_TABLE . "
-		WHERE topic_id = $topic_id
-			AND poster_id = $s_sort_user_id
-		" . (($auth->acl_get('m_approve', $forum_id)) ? '' : 'AND post_approved = 1');
+				<find><![CDATA[//----[ User Post Isolation ]----\\
+	$sql = 'SELECT DISTINCT p.poster_id AS poster_id, u.username AS username
+		FROM ' . POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
+		WHERE p.topic_id = ' . $topic_data['topic_id'] . '
+			AND p.poster_id = u.user_id' . 
+			(($auth->acl_get('m_approve', $forum_id)) ? '' : ' AND p.post_approved = 1') .
+		' ORDER BY LOWER(u.username)';
 	$result = $db->sql_query($sql);
-	$total_posts = (int) $db->sql_fetchfield('num_posts');
+	$user_ary = array();
+	while($urow = $db->sql_fetchrow($result))
+	{
+		$selected = (isset($s_sort_user_id) && $s_sort_user_id == $urow['poster_id']) ? ' selected="selected"' : '';
+		$user_ary[] = '<option value="' . $urow['poster_id'] . '"' . $selected . '>' . $urow['username'] . '</option>';
+	}
+	$s_topic_users = implode(' ', $user_ary);
 	$db->sql_freeresult($result);
-
-	$limit_posts_time = '';
-}
-//----[ End User Post Isolation ]----\\]]></action>
-			</edit>
-			<edit>
-				<find><![CDATA[$pagination = generate_pagination(append_sid("{$phpbb_root_path}viewtopic.$phpEx", "f=$forum_id&amp;t=$topic_id" . ((strlen($u_sort_param)) ? "&amp;$u_sort_param" : '') . (($highlight_match) ? "&amp;hilit=$highlight" : '')), $total_posts, $config['posts_per_page'], $start);]]></find>
-				<action type="replace-with"><![CDATA[$pagination = generate_pagination(append_sid("{$phpbb_root_path}viewtopic.$phpEx", "f=$forum_id&amp;t=$topic_id" . ((isset($s_sort_user_id) && $s_sort_user_id !== 0) ? "&amp;user_select={$s_sort_user_id}" : '') . ((strlen($u_sort_param)) ? "&amp;$u_sort_param" : '') . (($highlight_match) ? "&amp;hilit=$highlight" : '')), $total_posts, $config['posts_per_page'], $start);]]></action>
-			</edit>
-			<edit>
-				<find><![CDATA['U_POST_NEW_TOPIC' 		=> ($auth->acl_get('f_post', $forum_id) || $user->data['user_id'] == ANONYMOUS) ? append_sid("{$phpbb_root_path}posting.$phpEx", "mode=post&amp;f=$forum_id") : '',
-	'U_POST_REPLY_TOPIC' 	=> ($auth->acl_get('f_reply', $forum_id) || $user->data['user_id'] == ANONYMOUS) ? append_sid("{$phpbb_root_path}posting.$phpEx", "mode=reply&amp;f=$forum_id&amp;t=$topic_id") : '',
-	'U_BUMP_TOPIC'			=> (bump_topic_allowed($forum_id, $topic_data['topic_bumped'], $topic_data['topic_last_post_time'], $topic_data['topic_poster'], $topic_data['topic_last_poster_id'])) ? append_sid("{$phpbb_root_path}posting.$phpEx", "mode=bump&amp;f=$forum_id&amp;t=$topic_id&amp;hash=" . generate_link_hash("topic_$topic_id")) : '')
-);]]></find>
-				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
+	$template->assign_vars(array(
+		'S_SELECT_SORT_USERS'	=> ($s_topic_users) ? '<select name="user_select"><option value="0">' . $user->lang['VIEW_ALL_POSTERS'] . '</option>' . $s_topic_users . '</select>' : '',
+	));
+//----[ End User Post Isolation ]----\\]]></find>
+				<action type="replace-with"><![//----[ User Post Isolation ]----\\
 	$sql = 'SELECT DISTINCT p.poster_id AS poster_id, u.username AS username, u.user_colour AS colour
 		FROM ' . POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
 		WHERE p.topic_id = ' . $topic_data['topic_id'] . '
@@ -197,37 +170,6 @@ elseif($s_sort_user_id !== 0)
 		exit;
 	}
 //----[ End User Post Isolation ]----\\]]></action>
-			</edit>
-			<edit>
-				<find><![CDATA[// Container for user details, only process once
-$post_list = $user_cache = $id_cache = $attachments = $attach_list = $rowset = $update_count = $post_edit_list = array();
-$has_attachments = $display_notice = false;
-$bbcode_bitfield = '';
-$i = $i_total = 0;]]></find>
-				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
-$usort_where = ($s_sort_user_id !== 0) ? ' AND p.poster_id = ' . $s_sort_user_id : '';
-//----[ End User Post Isolation ]----\\]]></action>
-			</edit>
-			<edit>
-				<find><![CDATA[		$limit_posts_time
-	ORDER BY $sql_sort_order";]]></find>
-				<action type="replace-with"><![CDATA[		$limit_posts_time
-		$usort_where
-	ORDER BY $sql_sort_order";]]></action>
-			</edit>
-			<edit>
-				<find><![CDATA['WHERE'		=> $db->sql_in_set('p.post_id', $post_list) . '
-		AND u.user_id = p.poster_id']]></find>
-				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
-		. $usort_where
-//----[ End User Post Isolation ]----\\]]></action>
-			</edit>
-		</open>
-		
-		<open src="styles/prosilver/template/viewtopic_body.html">
-			<edit>
-				<find><![CDATA[<label>{L_SORT_BY} {S_SELECT_SORT_KEY}</label> <label>{S_SELECT_SORT_DIR} <input type="submit" name="sort" value="{L_GO}" class="button2" /></label>]]></find>
-				<action type="after-add"><![CDATA[        <br /><label>{L_DISPLAY_USER_POSTS}: {S_SELECT_SORT_USERS} <input type="submit" name="user_sort" value="{L_GO}" class="button2" /></label>]]></action>
 			</edit>
 		</open>
 		<open src="styles/prosilver/template/viewforum_body.html">

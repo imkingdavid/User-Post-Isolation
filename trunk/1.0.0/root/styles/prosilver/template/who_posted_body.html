@@ -1,0 +1,22 @@
+<!-- INCLUDE overall_header.html -->
+
+<h2>{L_WHO_POSTED}</h2>
+<p>{L_WHO_POSTED_EXPLAIN}</p>
+<div class="post bg1">
+	<div class="inner"><span class="corners-top"><span></span></span>
+    <fieldset class="fields1">
+    	<dl>
+        	<dt><label>{L_USERNAME}:</label></dt>
+            <dd>{L_REPLIES}</dd>
+        </dl>
+    	<!-- BEGIN user_row -->
+        	<dl>
+            	<dt><label>{user_row.USERNAME}:</label></dt>
+                <dd><a href="{user_row.U_POSTS}">{user_row.POSTS}</a></dd>
+            </dl>
+        <!-- END user_row -->
+    </fieldset>
+    <span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- INCLUDE overall_footer.html -->
