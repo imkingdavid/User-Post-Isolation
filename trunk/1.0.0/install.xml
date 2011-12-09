@@ -6,7 +6,8 @@
 		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
 		<title lang="en"><![CDATA[User Post Isolation]]></title>
 		<description lang="en"><![CDATA[View all posts from a certain user in a topic.]]></description>
-		<author-notes lang="en"><![CDATA[If this MOD has helped you, please consider donating by visiting http://www.thedavidking.com and clicking the Donate link in the footer. All donations are voluntary and will be greatly appreciated.]]></author-notes>
+		<author-notes lang="en"><![CDATA[This file is for installing the latest version of this MOD when no previous version is present. If you have a previous version of this MOD, please follow appropriate update instructions in the contrib directory.
+        If this MOD has helped you, please consider donating by visiting http://www.thedavidking.com and clicking the Donate link in the footer. All donations are voluntary and will be greatly appreciated.]]></author-notes>
 		<author-group>
 			<author>
 				<realname><![CDATA[David King]]></realname>
@@ -74,7 +75,7 @@
 				<changelog lang="en">
 					<change><![CDATA[[fix] username drop-down menu on viewtopic remains visible when only one post is shown]]></change>
 					<change><![CDATA[[fix] reduces number of queries caused by [new] feature in previous update (who posted)]]></change>
-                    <change><![CDATA[[change] last word of language entry for Who Posted page heading changed from "posters" to "participants"]]></change>
+                    <change><![CDATA[[change] last word of language entry for Who Posted page title changed from "posters" to "participants"]]></change>
 				</changelog>
 			</entry>
 		</history>
