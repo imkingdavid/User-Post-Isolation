@@ -7,7 +7,7 @@
 		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
 		<title lang="en"><![CDATA[User Post Isolation]]></title>
 		<description lang="en"><![CDATA[View all posts from a certain user in a topic.]]></description>
-		<author-notes lang="en"><![CDATA[This file should be used only to update from version 1.0.0 to version 1.0.1. If you do not have 1.0.0 installed already, please install the latest version of this MOD by using the install.xml in the main directory of this MOD package.
+		<author-notes lang="en"><![CDATA[This file should be used only to update from version 1.0.1 to version 1.0.2. If you do not have 1.0.1 installed already, please install the latest version of this MOD by using the install.xml in the main directory of this MOD package.
 		If this MOD has helped you, please consider donating by visiting http://www.phpbbdevelopers.net/board/lwdonate.php. All donations are voluntary and will be greatly appreciated.]]></author-notes>
 		<author-group>
 			<author>

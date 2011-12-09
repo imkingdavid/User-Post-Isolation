@@ -63,7 +63,7 @@
 				<date>2011-07-15</date>
 				<rev-version>1.0.4</rev-version>
 				<changelog lang="en">
-					<change><![CDATA[[fix] install and update xmls had a replace_with instead of replace-with; see previous history entry for new stuff in this version.]]></change>
+					<change><![CDATA[[fix] install and update xmls had a replace_with instead of replace-with]]></change>
 					<change><![CDATA[[fix] usernames are no longer sorted case-sensitive]]></change>
 					<change><![CDATA[[new] on viewing a forum, click the reply count for a topic to view the users that posted in that topic and the number of replies each posted. click on a user's reply count to view that user's posts in isolation]]></change>
 				</changelog>
@@ -74,6 +74,7 @@
 				<changelog lang="en">
 					<change><![CDATA[[fix] username drop-down menu on viewtopic remains visible when only one post is shown]]></change>
 					<change><![CDATA[[fix] reduces number of queries caused by [new] feature in previous update (who posted)]]></change>
+                    <change><![CDATA[[change] last word of language entry for Who Posted page heading changed from "posters" to "participants"]]></change>
 				</changelog>
 			</entry>
 		</history>
@@ -225,7 +226,7 @@ $usort_where = ($s_sort_user_id !== 0) ? ' AND p.poster_id = ' . $s_sort_user_id
 			<edit>
 				<find><![CDATA[	'WHO_IS_ONLINE'		=> 'Who is online',]]></find>
 				<action type="after-add"><![CDATA[//----[ User Post Isolation ]----\\
-	'WHO_POSTED_TITLE'	=> 'View topic posters',
+	'WHO_POSTED_TITLE'	=> 'View topic participants',
 	'WHO_POSTED'		=> 'Who posted in this thread?',
 	'WHO_POSTED_EXPLAIN'=> 'This page displays a list of all users who posted in the selected topic. Clicking on a user\'s reply count will allow you to view that user\'s posts in isolation.',
 //----[ End User Post Isolation ]----\\]]></action>
